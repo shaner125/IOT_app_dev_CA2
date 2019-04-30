@@ -46,6 +46,7 @@ public class SetBulb  extends AppCompatActivity {
     String clientId;
     TextView tvProgressLabel;
     private Button btnSetColor;
+    private static int[] colorValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +137,8 @@ public class SetBulb  extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mqttManager.publishString("{\"state\":{\"desired\":{\"colourSelected\":1}}}", topic, AWSIotMqttQos.QOS0);
+                mqttManager.publishString("{\"state\":{\"desired\":{\"r\":"+colorValue[1]+", \"g\":"+colorValue[2]+",\"b\":"+colorValue[3]+"}}}", topic, AWSIotMqttQos.QOS0);
+
             }
         });
 
@@ -204,11 +207,9 @@ public class SetBulb  extends AppCompatActivity {
      */
     @SuppressLint("SetTextI18n")
     private void setLayoutColor(ColorEnvelope envelope) {
-        int[] colorValue = envelope.getArgb();
+        colorValue = envelope.getArgb();
         TextView textView = findViewById(R.id.textView);
         textView.setText(Arrays.toString((colorValue)));
-        mqttManager.publishString("{\"state\":{\"desired\":{\"r\":"+colorValue[1]+", \"g\":"+colorValue[2]+",\"b\":"+colorValue[3]+"}}}", topic, AWSIotMqttQos.QOS0);
-
         AlphaTileView alphaTileView = findViewById(R.id.alphaTileView);
         alphaTileView.setPaintColor(envelope.getColor());
     }

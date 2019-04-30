@@ -40,7 +40,7 @@ public class colorTemp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_color_temp);
 
-        topic = "$aws/things/piCA2/shadow/update";
+
         SeekBar seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(seekBarChangeListener);
         int progress = seekBar.getProgress();
@@ -48,6 +48,7 @@ public class colorTemp extends AppCompatActivity {
         tvProgressLabel.setText("Bulb Colour Temperature: " + progress);
         btnSetTemp = (Button)findViewById(R.id.btn_setColor);
 
+        topic = "$aws/things/piCA2/shadow/update";
         // MQTT client IDs are required to be unique per AWS IoT account.
         // This UUID is "practically unique" but does not _guarantee_
         // uniqueness.
@@ -110,7 +111,7 @@ public class colorTemp extends AppCompatActivity {
                 mqttManager.publishString("{\"state\":{\"desired\":{\"tempSelected\":1}}}", topic, AWSIotMqttQos.QOS0);
             }
         });
-        
+
     }
     SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
 
