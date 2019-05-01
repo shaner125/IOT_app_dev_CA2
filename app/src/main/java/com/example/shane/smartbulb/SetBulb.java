@@ -1,8 +1,10 @@
 package com.example.shane.smartbulb;
 
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
+//code examples found at: https://github.com/skydoves/ColorPickerView
 import com.skydoves.colorpickerview.AlphaTileView;
 import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.ColorPickerDialog;
@@ -33,6 +36,8 @@ import com.skydoves.colorpickerview.ColorPickerView;
 import com.skydoves.colorpickerview.flag.FlagMode;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 import java.util.Arrays;
+
+import static java.lang.System.exit;
 
 @SuppressWarnings("ConstantConditions")
 public class SetBulb  extends AppCompatActivity {
@@ -45,8 +50,10 @@ public class SetBulb  extends AppCompatActivity {
     AWSIotMqttManager mqttManager;
     String clientId;
     TextView tvProgressLabel;
-    private Button btnSetColor;
+    private Button btnSetColor, btnMood, btnBack;
     private static int[] colorValue;
+    TextView textView;
+    AlphaTileView alphaTileView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +69,10 @@ public class SetBulb  extends AppCompatActivity {
         tvProgressLabel = findViewById(R.id.textView1);
         tvProgressLabel.setText("Bulb Brightness: " + progress);
         btnSetColor = (Button) findViewById(R.id.btn_setColor);
+        btnMood = (Button) findViewById(R.id.btn_moodMode);
+        btnBack = (Button) findViewById(R.id.btn_back);
+        textView = findViewById(R.id.textView);
+        alphaTileView = findViewById(R.id.alphaTileView);
 
 
         // MQTT client IDs are required to be unique per AWS IoT account.
@@ -142,6 +153,21 @@ public class SetBulb  extends AppCompatActivity {
             }
         });
 
+        btnMood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mqttManager.publishString("{\"state\":{\"desired\":{\"moodStatus\":1}}}", topic, AWSIotMqttQos.QOS0);
+                textView.setText("Waiting...");
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            exit(0);
+            }
+        });
+
     }
 
     SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -184,10 +210,17 @@ public class SetBulb  extends AppCompatActivity {
                                         Log.d(LOG_TAG, " Message: " + message);
                                         try {
                                             JSONObject obj = new JSONObject(message);
+                                            if (message.contains("moodR")){
+                                                int r = obj.getJSONObject("state").getJSONObject("desired").getInt("moodR");
+                                                int g = obj.getJSONObject("state").getJSONObject("desired").getInt("moodG");
+                                                int b = obj.getJSONObject("state").getJSONObject("desired").getInt("moodB");
+                                                alphaTileView.setPaintColor(Color.rgb(r,g,b));
+                                                textView.setText("["+r+","+g+","+b+"]");
+
+                                            }
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
-
                                     } catch (UnsupportedEncodingException e) {
                                         Log.e(LOG_TAG, "Message encoding error.", e);
                                     }
@@ -208,9 +241,7 @@ public class SetBulb  extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void setLayoutColor(ColorEnvelope envelope) {
         colorValue = envelope.getArgb();
-        TextView textView = findViewById(R.id.textView);
         textView.setText(Arrays.toString((colorValue)));
-        AlphaTileView alphaTileView = findViewById(R.id.alphaTileView);
         alphaTileView.setPaintColor(envelope.getColor());
     }
 

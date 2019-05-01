@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import static com.example.shane.smartbulb.SetBulb.LOG_TAG;
+import static java.lang.System.exit;
 
 public class colorTemp extends AppCompatActivity {
 
@@ -33,7 +34,7 @@ public class colorTemp extends AppCompatActivity {
     AWSIotMqttManager mqttManager;
     String clientId;
     TextView tvProgressLabel;
-    Button btnSetTemp;
+    Button btnSetTemp, btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,7 @@ public class colorTemp extends AppCompatActivity {
         tvProgressLabel = findViewById(R.id.textView1);
         tvProgressLabel.setText("Bulb Colour Temperature: " + progress);
         btnSetTemp = (Button)findViewById(R.id.btn_setColor);
+        btnBack = (Button) findViewById(R.id.btn_back);
 
         topic = "$aws/things/piCA2/shadow/update";
         // MQTT client IDs are required to be unique per AWS IoT account.
@@ -109,6 +111,13 @@ public class colorTemp extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mqttManager.publishString("{\"state\":{\"desired\":{\"tempSelected\":1}}}", topic, AWSIotMqttQos.QOS0);
+            }
+        });
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exit(0);
             }
         });
 

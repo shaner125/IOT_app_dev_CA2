@@ -16,7 +16,7 @@
             android:id="@+id/colorPickerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="6"
+            android:layout_weight="5"
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             app:palette="@drawable/palette"
@@ -47,7 +47,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="4"
+            android:layout_weight="5"
             android:orientation="vertical"
             android:layout_marginBottom="15dp">
 
@@ -72,12 +72,29 @@
                 app:tileSize="20" />
 
             <Button
+                android:id="@+id/btn_moodMode"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:background="@color/accutextcolor"
+                android:text="@string/btn_moodMode"
+                android:textColor="@color/white" />
+
+            <Button
                 android:id="@+id/btn_setColor"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dip"
                 android:background="@color/accutextcolor"
                 android:text="@string/btn_setColor"
+                android:textColor="@color/white" />
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:background="@color/accutextcolor"
+                android:text="@string/btn_back"
                 android:textColor="@color/white" />
         </LinearLayout>
     </LinearLayout>
